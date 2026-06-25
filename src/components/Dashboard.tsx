@@ -1,0 +1,228 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  LayoutDashboard, 
+  Calendar, 
+  MessageSquare, 
+  Settings, 
+  LogOut,
+  TrendingUp,
+  User,
+  Bell,
+  Eye,
+  EyeOff,
+  PlusCircle,
+  ShieldCheck
+} from 'lucide-react';
+import GoalWheelControl from './GoalWheelControl';
+import SimpleView from './SimpleView';
+import Scheduling from './Scheduling';
+
+interface DashboardProps {
+  onTelehealth: () => void;
+  userData?: {
+    name: string;
+    signupPath: 'provider' | 'b2c';
+    clinicId?: string;
+  };
+}
+
+const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
+  const [isSimpleMode, setIsSimpleMode] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'appointments'>('overview');
+
+  // Default to simple mode for B2C users as a "Self-Guided" starting point
+  useEffect(() => {
+    if (userData?.signupPath === 'b2c') {
+      setIsSimpleMode(true);
+    }
+  }, [userData]);
+
+  if (isSimpleMode) {
+    return <SimpleView userData={userData} onToggle={() => setIsSimpleMode(false)} />;
+  }
+
+  const isB2C = userData?.signupPath === 'b2c';
+
+  return (
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+        <div className="p-6 flex items-center gap-2">
+          <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white">
+            <TrendingUp size={18} />
+          </div>
+          <span className="text-xl font-bold">BioSync</span>
+        </div>
+        
+        <nav className="flex-1 px-4 py-4 space-y-1">
+          <button 
+            onClick={() => setActiveTab('overview')}
+            className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'overview' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            <LayoutDashboard size={20} />
+            Overview
+          </button>
+          <button 
+            onClick={() => setActiveTab('appointments')}
+            className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'appointments' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            <Calendar size={20} />
+            Appointments
+          </button>
+          <a href="#" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+            <MessageSquare size={20} />
+            Messages
+          </a>
+          <a href="#" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+            <User size={20} />
+            Health Profile
+          </a>
+          
+          {isB2C && (
+            <button className="w-full flex items-center gap-3 px-4 py-2 text-purple-600 hover:bg-purple-50 rounded-lg font-bold border-t border-gray-100 mt-4 pt-4">
+              <PlusCircle size={20} />
+              Link Provider
+            </button>
+          )}
+        </nav>
+
+        <div className="p-4 border-t border-gray-200">
+          <a href="#" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+            <Settings size={20} />
+            Settings
+          </a>
+          <button className="w-full flex items-center gap-3 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg mt-1 text-left">
+            <LogOut size={20} />
+            Sign Out
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto">
+        <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-10">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-semibold">Welcome back, {userData?.name || 'Alex'}</h1>
+            <button 
+              onClick={() => setIsSimpleMode(true)}
+              className="flex items-center gap-2 text-xs font-medium text-gray-500 hover:text-purple-600 bg-gray-50 px-3 py-1.5 rounded-full transition-all border border-gray-200"
+            >
+              <EyeOff size={14} />
+              {isB2C ? 'Care Compass' : 'Simple Mode'}
+            </button>
+            {userData?.clinicId && (
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full border border-blue-100 text-xs font-bold uppercase tracking-wider">
+                <ShieldCheck size={14} />
+                Clinic Verified
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-4">
+            <button className="p-2 text-gray-400 hover:text-gray-600 relative">
+              <Bell size={20} />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+            </button>
+            <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 font-bold text-xs">
+              {(userData?.name || 'A')[0]}
+            </div>
+          </div>
+        </header>
+
+        <div className="p-8">
+          {activeTab === 'overview' ? (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Goal Wheel Card */}
+              <div className="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-lg font-bold">Health Goal Wheel</h2>
+                    <p className="text-sm text-gray-500">{isB2C ? 'Self-Guided Progress Tracking' : 'Clinical Health Index'}</p>
+                  </div>
+                  <span className="text-sm text-purple-600 font-medium">Last synced: Just now</span>
+                </div>
+                <div className="flex items-center justify-center">
+                  <GoalWheelControl />
+                </div>
+              </div>
+
+              {/* Side Stats */}
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                  <h3 className="text-sm font-medium text-gray-500 mb-2">
+                    {isB2C ? 'Optimization Score' : 'Clinical Outlook'}
+                  </h3>
+                  <div className="flex items-end gap-2">
+                    <span className={`text-3xl font-bold ${isB2C ? 'text-purple-600' : 'text-green-600'}`}>
+                      {isB2C ? '74%' : 'Stable'}
+                    </span>
+                    <span className="text-sm text-gray-400 mb-1">↑ 4% this month</span>
+                  </div>
+                </div>
+                
+                {!isB2C && (
+                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h3 className="text-sm font-medium text-gray-500 mb-4">Upcoming Appointment</h3>
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Calendar size={20} />
+                      </div>
+                      <div>
+                        <p className="font-semibold">Dr. Sarah Johnson</p>
+                        <p className="text-sm text-gray-500">Chronic Care Review</p>
+                        <button 
+                          onClick={onTelehealth}
+                          className="text-sm text-purple-600 font-bold mt-2 hover:text-purple-700 transition-colors flex items-center gap-1"
+                        >
+                          Join Video Call
+                          <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse" />
+                        </button>
+                        <p className="text-xs text-gray-400 mt-1">Tomorrow, 10:00 AM</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {isB2C ? (
+                  <div className="bg-gray-900 p-6 rounded-2xl shadow-sm text-white relative overflow-hidden">
+                    <div className="relative z-10">
+                      <h3 className="font-bold text-lg mb-2">Device Sync</h3>
+                      <p className="text-gray-400 text-sm mb-4">Connected to Apple Health & Oura. Next sync in 10 mins.</p>
+                      <button className="bg-white text-gray-900 px-4 py-2 rounded-lg text-sm font-bold">Manage Devices</button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-purple-600 p-6 rounded-2xl shadow-sm text-white relative overflow-hidden">
+                    <div className="relative z-10">
+                      <h3 className="font-bold text-lg mb-2">CCM Tracking</h3>
+                      <p className="text-purple-100 text-sm mb-4">You have 12 minutes of care coordination logged this month.</p>
+                      <button className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-bold">View History</button>
+                    </div>
+                    <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-purple-500 rounded-full opacity-50"></div>
+                  </div>
+                )}
+
+                {isB2C && (
+                  <div className="bg-gradient-to-br from-purple-100 to-blue-100 p-6 rounded-2xl border border-purple-200">
+                    <h3 className="font-bold text-purple-900 mb-1 italic">BioSync Pro</h3>
+                    <p className="text-xs text-purple-700 mb-3 font-medium uppercase tracking-wider">Premium Active</p>
+                    <p className="text-sm text-gray-600 mb-4 font-medium">Unlock deeper insights with clinical oversight and direct messaging.</p>
+                    <button 
+  onClick={() => window.open('https://buy.stripe.com/fZufZh2gR0YRavw2fT3AY00', '_blank')}
+  className="w-full py-2 bg-white text-purple-600 rounded-lg text-sm font-bold shadow-sm border border-purple-200"
+>
+  Review Plan
+</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <Scheduling />
+          )}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default Dashboard;
