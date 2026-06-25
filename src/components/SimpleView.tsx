@@ -1,17 +1,29 @@
 import React from 'react';
 import { Heart, Brain, Shield, Zap, Activity, Info } from 'lucide-react';
 
-const SimpleView = ({ onToggle, userData }: { onToggle: () => void, userData?: any }) => {
+const SimpleView = ({ onToggle, userData, isPremium }: { onToggle: () => void, userData?: any, isPremium?: boolean }) => {
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-extrabold text-gray-900">Your Health Overview</h1>
-        <button 
-          onClick={onToggle}
-          className="text-sm font-medium text-purple-600 bg-purple-50 px-4 py-2 rounded-full hover:bg-purple-100 transition-all"
-        >
-          Switch to Advanced Mode
-        </button>
+        <div>
+          <h1 className="text-3xl font-extrabold text-gray-900">Care Compass</h1>
+          <p className="text-gray-500">Your Foundational Wellness Overview</p>
+        </div>
+        {isPremium ? (
+          <button 
+            onClick={onToggle}
+            className="text-sm font-medium text-purple-600 bg-purple-50 px-4 py-2 rounded-full hover:bg-purple-100 transition-all border border-purple-200"
+          >
+            Switch to Power Wellness
+          </button>
+        ) : (
+          <div className="flex flex-col items-end">
+            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Current Tier</span>
+            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-100">
+              {userData?.subscriptionTier || 'Standard'} Mode
+            </span>
+          </div>
+        )}
       </div>
 
       <div className="bg-white p-8 rounded-3xl shadow-sm border border-purple-100 flex items-center gap-8">

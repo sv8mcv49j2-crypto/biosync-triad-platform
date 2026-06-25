@@ -23,25 +23,36 @@ interface DashboardProps {
     name: string;
     signupPath: 'provider' | 'b2c';
     clinicId?: string;
+    subscriptionTier?: 'Standard' | 'Clinical' | 'Premium';
+    status?: 'Pending' | 'Active';
   };
 }
 
 const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
-  const [isSimpleMode, setIsSimpleMode] = useState(false);
+  const [uiMode, setUiMode] = useState<'care-compass' | 'power-wellness'>('care-compass');
   const [activeTab, setActiveTab] = useState<'overview' | 'appointments'>('overview');
 
-  // Default to simple mode for B2C users as a "Self-Guided" starting point
-  useEffect(() => {
-    if (userData?.signupPath === 'b2c') {
-      setIsSimpleMode(true);
-    }
-  }, [userData]);
-
-  if (isSimpleMode) {
-    return <SimpleView userData={userData} onToggle={() => setIsSimpleMode(false)} />;
-  }
-
+  const isPremium = userData?.subscriptionTier === 'Premium';
   const isB2C = userData?.signupPath === 'b2c';
+
+  // Determine initial UI mode based on subscription tier
+  useEffect(() => {
+    if (isPremium) {
+      setUiMode('power-wellness');
+    } else {
+      setUiMode('care-compass');
+    }
+  }, [userData, isPremium]);
+
+  if (uiMode === 'care-compass') {
+    return (
+      <SimpleView 
+        userData={userData} 
+        onToggle={() => isPremium ? setUiMode('power-wellness') : null} 
+        isPremium={isPremium}
+      />
+    );
+  }
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -104,11 +115,11 @@ const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold">Welcome back, {userData?.name || 'Alex'}</h1>
             <button 
-              onClick={() => setIsSimpleMode(true)}
-              className="flex items-center gap-2 text-xs font-medium text-gray-500 hover:text-purple-600 bg-gray-50 px-3 py-1.5 rounded-full transition-all border border-gray-200"
+              onClick={() => setUiMode('care-compass')}
+              className="flex items-center gap-2 text-xs font-medium text-purple-600 bg-purple-50 px-3 py-1.5 rounded-full transition-all border border-purple-200"
             >
               <EyeOff size={14} />
-              {isB2C ? 'Care Compass' : 'Simple Mode'}
+              Switch to Care Compass
             </button>
             {userData?.clinicId && (
               <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-600 rounded-full border border-blue-100 text-xs font-bold uppercase tracking-wider">
@@ -182,6 +193,31 @@ const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
                   </div>
                 )}
 
+                {isPremium && (
+                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-purple-200">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Zap size={18} className="text-purple-600" />
+                      <h3 className="font-bold">Active Protocols</h3>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-gray-600 font-medium">Glucose Stabilizer</span>
+                        <span className="text-purple-600 font-bold">Day 3/14</span>
+                      </div>
+                      <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-purple-600 h-full w-[21%]"></div>
+                      </div>
+                      <div className="flex items-center justify-between text-sm pt-1">
+                        <span className="text-gray-600 font-medium">Sleep Reset</span>
+                        <span className="text-purple-600 font-bold">Day 7/21</span>
+                      </div>
+                      <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-purple-600 h-full w-[33%]"></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {isB2C ? (
                   <div className="bg-gray-900 p-6 rounded-2xl shadow-sm text-white relative overflow-hidden">
                     <div className="relative z-10">
@@ -198,6 +234,28 @@ const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
                       <button className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-bold">View History</button>
                     </div>
                     <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-purple-500 rounded-full opacity-50"></div>
+                  </div>
+                )}
+
+                {isPremium && (
+                  <div className="bg-gradient-to-br from-indigo-900 to-purple-900 p-6 rounded-2xl shadow-sm text-white">
+                    <div className="flex items-center gap-2 mb-4">
+                      <TrendingUp size={18} className="text-purple-300" />
+                      <h3 className="font-bold text-purple-100 uppercase text-xs tracking-widest">Advanced Correlations</h3>
+                    </div>
+                    <p className="text-xs text-purple-200 mb-4 leading-relaxed">
+                      Your <span className="text-white font-bold">Glucose Stability</span> is 14% higher on days where your <span className="text-white font-bold">Deep Sleep</span> exceeded 90 minutes.
+                    </p>
+                    <div className="flex gap-2">
+                      <div className="flex-1 h-12 bg-white/10 rounded-lg flex flex-col items-center justify-center border border-white/10">
+                        <span className="text-[10px] text-purple-300 uppercase font-bold">Sleep</span>
+                        <span className="text-sm font-bold">92m</span>
+                      </div>
+                      <div className="flex-1 h-12 bg-white/10 rounded-lg flex flex-col items-center justify-center border border-white/10">
+                        <span className="text-[10px] text-purple-300 uppercase font-bold">GMI</span>
+                        <span className="text-sm font-bold">5.8%</span>
+                      </div>
+                    </div>
                   </div>
                 )}
 

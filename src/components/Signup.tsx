@@ -28,7 +28,12 @@ const Signup = ({ onComplete, onBack }: SignupProps) => {
     } else if (step === 'payment') {
       setStep('onboarding');
     } else if (step === 'onboarding') {
-      onComplete({ ...formData, signupPath });
+      onComplete({ 
+        ...formData, 
+        signupPath, 
+        subscriptionTier: signupPath === 'b2c' ? 'Premium' : 'Clinical',
+        status: 'Active'
+      });
     }
   };
 
