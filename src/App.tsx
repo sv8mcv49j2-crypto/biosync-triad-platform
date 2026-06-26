@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Activity, Brain, Shield, Zap, HeartPulse, ChevronRight, UserCircle } from 'lucide-react';
 import GoalWheel from './components/GoalWheel';
 import Dashboard from './components/Dashboard';

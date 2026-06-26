@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Users, 
   Clock, 
@@ -8,7 +8,6 @@ import {
   Filter, 
   ArrowUpRight, 
   ArrowDownRight,
-  ChevronRight,
   Play,
   Pause,
   Save,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Calendar, 
@@ -8,10 +8,12 @@ import {
   TrendingUp,
   User,
   Bell,
-  Eye,
   EyeOff,
   PlusCircle,
-  ShieldCheck
+  ShieldCheck,
+  Zap,
+  BookOpen,
+  Activity
 } from 'lucide-react';
 import GoalWheelControl from './GoalWheelControl';
 import SimpleView from './SimpleView';
@@ -30,7 +32,7 @@ interface DashboardProps {
 
 const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
   const [uiMode, setUiMode] = useState<'care-compass' | 'power-wellness'>('care-compass');
-  const [activeTab, setActiveTab] = useState<'overview' | 'appointments'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'appointments' | 'protocols' | 'library'>('overview');
 
   const isPremium = userData?.subscriptionTier === 'Premium';
   const isB2C = userData?.signupPath === 'b2c';
@@ -80,6 +82,26 @@ const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
             <Calendar size={20} />
             Appointments
           </button>
+
+          {isPremium && (
+            <>
+              <button 
+                onClick={() => setActiveTab('protocols')}
+                className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'protocols' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                <Zap size={20} />
+                Protocols
+              </button>
+              <button 
+                onClick={() => setActiveTab('library')}
+                className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === 'library' ? 'bg-purple-50 text-purple-700' : 'text-gray-600 hover:bg-gray-50'}`}
+              >
+                <BookOpen size={20} />
+                Insight Library
+              </button>
+            </>
+          )}
+
           <a href="#" className="flex items-center gap-3 px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
             <MessageSquare size={20} />
             Messages
@@ -170,6 +192,28 @@ const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
                   </div>
                 </div>
                 
+                {isPremium && (
+                  <div className="bg-gradient-to-br from-indigo-900 to-purple-900 p-6 rounded-2xl shadow-sm text-white">
+                    <div className="flex items-center gap-2 mb-4">
+                      <TrendingUp size={18} className="text-purple-300" />
+                      <h3 className="font-bold text-purple-100 uppercase text-xs tracking-widest">Advanced Correlations</h3>
+                    </div>
+                    <p className="text-xs text-purple-200 mb-4 leading-relaxed">
+                      Your <span className="text-white font-bold">Glucose Stability</span> is 14% higher on days where your <span className="text-white font-bold">Deep Sleep</span> exceeded 90 minutes.
+                    </p>
+                    <div className="flex gap-2">
+                      <div className="flex-1 h-12 bg-white/10 rounded-lg flex flex-col items-center justify-center border border-white/10">
+                        <span className="text-[10px] text-purple-300 uppercase font-bold">Sleep</span>
+                        <span className="text-sm font-bold">92m</span>
+                      </div>
+                      <div className="flex-1 h-12 bg-white/10 rounded-lg flex flex-col items-center justify-center border border-white/10">
+                        <span className="text-[10px] text-purple-300 uppercase font-bold">GMI</span>
+                        <span className="text-sm font-bold">5.8%</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 {!isB2C && (
                   <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
                     <h3 className="text-sm font-medium text-gray-500 mb-4">Upcoming Appointment</h3>
@@ -237,28 +281,6 @@ const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
                   </div>
                 )}
 
-                {isPremium && (
-                  <div className="bg-gradient-to-br from-indigo-900 to-purple-900 p-6 rounded-2xl shadow-sm text-white">
-                    <div className="flex items-center gap-2 mb-4">
-                      <TrendingUp size={18} className="text-purple-300" />
-                      <h3 className="font-bold text-purple-100 uppercase text-xs tracking-widest">Advanced Correlations</h3>
-                    </div>
-                    <p className="text-xs text-purple-200 mb-4 leading-relaxed">
-                      Your <span className="text-white font-bold">Glucose Stability</span> is 14% higher on days where your <span className="text-white font-bold">Deep Sleep</span> exceeded 90 minutes.
-                    </p>
-                    <div className="flex gap-2">
-                      <div className="flex-1 h-12 bg-white/10 rounded-lg flex flex-col items-center justify-center border border-white/10">
-                        <span className="text-[10px] text-purple-300 uppercase font-bold">Sleep</span>
-                        <span className="text-sm font-bold">92m</span>
-                      </div>
-                      <div className="flex-1 h-12 bg-white/10 rounded-lg flex flex-col items-center justify-center border border-white/10">
-                        <span className="text-[10px] text-purple-300 uppercase font-bold">GMI</span>
-                        <span className="text-sm font-bold">5.8%</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
                 {isB2C && (
                   <div className="bg-gradient-to-br from-purple-100 to-blue-100 p-6 rounded-2xl border border-purple-200">
                     <h3 className="font-bold text-purple-900 mb-1 italic">BioSync Pro</h3>
@@ -274,13 +296,77 @@ const Dashboard = ({ onTelehealth, userData }: DashboardProps) => {
                 )}
               </div>
             </div>
-          ) : (
+          ) : activeTab === 'appointments' ? (
             <Scheduling />
+          ) : activeTab === 'protocols' ? (
+            <div className="max-w-4xl space-y-6">
+              <h2 className="text-2xl font-bold">Biohacking Protocol Library</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <ProtocolCard 
+                  title="Glucose Stabilizer" 
+                  duration="14 Days" 
+                  level="Foundation" 
+                  description="Optimize your metabolic fuel through meal sequencing and timing."
+                />
+                <ProtocolCard 
+                  title="HRV Recovery Boost" 
+                  duration="21 Days" 
+                  level="Intermediate" 
+                  description="Maximize your autonomic flexibility with progressive biofeedback."
+                />
+                <ProtocolCard 
+                  title="Zone 2 Builder" 
+                  duration="28 Days" 
+                  level="Intermediate" 
+                  description="Build your aerobic base and mitochondrial health with HR tracking."
+                />
+                <ProtocolCard 
+                  title="Sleep Architecture Reset" 
+                  duration="14 Days" 
+                  level="Foundation" 
+                  description="Fine-tune your circadian rhythm for deeper REM and restorative sleep."
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-4xl space-y-6">
+              <h2 className="text-2xl font-bold">Insight Library</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                  <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+                    <BookOpen size={24} />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">The Glucose Rollercoaster</h3>
+                  <p className="text-gray-500 text-sm mb-4">Understanding postprandial excursions and why they impact your energy stability.</p>
+                  <button className="text-purple-600 font-bold text-sm">Read Article →</button>
+                </div>
+                <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm">
+                  <div className="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-4">
+                    <Activity size={24} />
+                  </div>
+                  <h3 className="font-bold text-lg mb-2">HRV Deep Dive</h3>
+                  <p className="text-gray-500 text-sm mb-4">RMSSD vs SDNN: Which metric should you track for daily recovery baselines?</p>
+                  <button className="text-purple-600 font-bold text-sm">Read Article →</button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </main>
     </div>
   );
 };
+
+const ProtocolCard = ({ title, duration, level, description }: any) => (
+  <div className="p-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:border-purple-200 transition-all group">
+    <div className="flex items-center justify-between mb-4">
+      <span className="px-3 py-1 bg-purple-50 text-purple-600 text-[10px] font-bold uppercase tracking-widest rounded-full">{level}</span>
+      <span className="text-xs font-medium text-gray-400">{duration}</span>
+    </div>
+    <h3 className="font-bold text-lg mb-2 group-hover:text-purple-600 transition-colors">{title}</h3>
+    <p className="text-gray-500 text-sm mb-6">{description}</p>
+    <button className="w-full py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-bold hover:bg-purple-600 hover:text-white transition-all">Start Protocol</button>
+  </div>
+);
 
 export default Dashboard;

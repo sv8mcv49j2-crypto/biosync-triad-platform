@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Camera, Mic, MicOff, Video, VideoOff, PhoneOff, Settings, MessageSquare, Users } from 'lucide-react';
+import { useState } from 'react';
+import { Mic, MicOff, Video, VideoOff, PhoneOff, Settings, MessageSquare, Users } from 'lucide-react';
 
 const Telehealth = () => {
   const [isMuted, setIsMuted] = useState(false);

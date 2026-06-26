@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Shield, User, Zap, Activity, CreditCard, ChevronRight, ArrowLeft, Building, Smartphone } from 'lucide-react';
+import { useState } from 'react';
+import { Shield, Zap, Activity, CreditCard, ChevronRight, ArrowLeft, Building, Smartphone, HeartPulse } from 'lucide-react';
 
 interface SignupProps {
   onComplete: (onboardingData: any) => void;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Calendar as CalendarIcon, Clock, MapPin, Video, ChevronRight, CheckCircle2 } from 'lucide-react';
 
 const Scheduling = () => {
