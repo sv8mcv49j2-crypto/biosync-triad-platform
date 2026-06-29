@@ -42,6 +42,7 @@ export default async function handler(req: any, res: any) {
     case 'checkout.session.completed':
       const session = event.data.object as Stripe.Checkout.Session;
       const customerEmail = session.customer_details?.email;
+      const amount = session.amount_total ? session.amount_total / 100 : 0;
       
       if (customerEmail) {
         // Update user status in database
@@ -51,6 +52,10 @@ export default async function handler(req: any, res: any) {
             args: [customerEmail]
           });
           console.log(`User ${customerEmail} activated via Stripe.`);
+
+          // Log the email alert for the owner
+          console.log(`ALERT (to aroland@eccm4u.com): Payment received from ${customerEmail} for ${amount}.`);
+          // Note: In production, call your email service (e.g. MailerSend) here using API key.
         } catch (dbErr) {
           console.error('Database update failed:', dbErr);
         }
