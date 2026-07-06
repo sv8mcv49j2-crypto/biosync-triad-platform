@@ -1,8 +1,8 @@
 import React from 'react';
 import { 
   Activity, Moon, Zap, Dumbbell, Users, 
-  Shield, AlertCircle, Clock, Heart, 
-  CheckCircle2, Info, BookOpen, Brain, 
+  Shield, AlertCircle, Clock, 
+  CheckCircle2, 
   Lock, Users2, Handshake, Sparkles, Languages
 } from 'lucide-react';
 
