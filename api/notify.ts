@@ -22,7 +22,7 @@ export default async function handler(req: Request): Promise<Response> {
       });
     }
 
-    const resendKey = process.env.RESEND_API_KEY || 're_fcCEQneh_GxdVykSL8BwnawnYbZXN58kE';
+    const resendKey = process.env.RESEND_API_KEY || 're_Bv8RmbwZ_LCKsy9xwnUBYdVrL2HQcdcd3';
             if (!resendKey) {
               console.error('RESEND_API_KEY not set');
               return new Response(JSON.stringify({ error: 'Email service not configured' }), {
