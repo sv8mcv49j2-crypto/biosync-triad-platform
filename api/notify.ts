@@ -45,7 +45,7 @@ Time: ${timestamp}`;
       },
       body: JSON.stringify({
         from: 'BioSync Triad <onboarding@resend.dev>',
-        to: ['eccm4u-aebec74e@ctomail.io'],
+        to: ['sv8mcv49j2@privaterelay.appleid.com'],
         subject: `New BioSync Signup: ${name || email}`,
         text: body,
       }),
