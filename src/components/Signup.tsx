@@ -46,6 +46,19 @@ const Signup = ({ onComplete, onBack }: SignupProps) => {
     } else if (step === 'payment') {
       setStep('onboarding');
     } else if (step === 'onboarding') {
+      // Fire-and-forget email notification — do not block the user
+      fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          signupPath,
+        }),
+      }).catch(() => {
+        // Silently ignore notification failures
+      });
+
       onComplete({ 
         ...formData, 
         signupPath, 
