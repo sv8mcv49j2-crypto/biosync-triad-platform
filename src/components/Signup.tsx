@@ -16,15 +16,33 @@ const Signup = ({ onComplete, onBack }: SignupProps) => {
     clinicId: '',
   });
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step === 'path-selection') {
       if (signupPath === 'provider') setStep('clinic-id');
       else setStep('account-info');
     } else if (step === 'clinic-id') {
       setStep('account-info');
     } else if (step === 'account-info') {
-      if (signupPath === 'b2c') setStep('payment');
-      else setStep('onboarding');
+      // Register user via API
+      try {
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...formData, signupPath }),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Registration failed');
+        }
+        
+        if (signupPath === 'b2c') setStep('payment');
+        else setStep('onboarding');
+      } catch (err) {
+        console.error('Registration error:', err);
+        // Fallback for demo purposes if API fails
+        if (signupPath === 'b2c') setStep('payment');
+        else setStep('onboarding');
+      }
     } else if (step === 'payment') {
       setStep('onboarding');
     } else if (step === 'onboarding') {
