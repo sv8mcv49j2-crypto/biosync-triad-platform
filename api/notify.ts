@@ -22,14 +22,14 @@ export default async function handler(req: Request): Promise<Response> {
       });
     }
 
-    const resendKey = process.env.RESEND_API_KEY;
-    if (!resendKey) {
-      console.error('RESEND_API_KEY not set');
-      return new Response(JSON.stringify({ error: 'Email service not configured' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
+    const resendKey = process.env.RESEND_API_KEY || 're_fcCEQneh_GxdVykSL8BwnawnYbZXN58kE';
+            if (!resendKey) {
+              console.error('RESEND_API_KEY not set');
+              return new Response(JSON.stringify({ error: 'Email service not configured' }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+              });
+            }
 
     const timestamp = new Date().toISOString();
     const body = `Name: ${name || 'N/A'}
