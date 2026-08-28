@@ -44,7 +44,7 @@ Time: ${timestamp}`;
         Authorization: `Bearer ${resendKey}`,
       },
       body: JSON.stringify({
-        from: 'BioSync Triad <notify@biosync-triad.com>',
+        from: 'BioSync Triad <onboarding@resend.dev>',
         to: ['eccm4u-aebec74e@ctomail.io'],
         subject: `New BioSync Signup: ${name || email}`,
         text: body,
