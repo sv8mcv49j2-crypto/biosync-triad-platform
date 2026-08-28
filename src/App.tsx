@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Activity, Brain, Shield, Zap, HeartPulse, ChevronRight } from 'lucide-react';
 import GoalWheel from './components/GoalWheel';
 import Dashboard from './components/Dashboard';
@@ -8,6 +8,7 @@ import ProviderDashboard from './components/ProviderDashboard';
 import Technology from './components/Technology';
 import Solutions from './components/Solutions';
 import LearnMore from './components/LearnMore';
+import NexeraLanding from './components/NexeraLanding';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -22,7 +23,14 @@ const PillarCard = ({ title, icon: Icon, description }: { title: string, icon: a
 );
 
 function App() {
-  const [view, setView] = useState<'landing' | 'signup' | 'dashboard' | 'telehealth' | 'provider' | 'technology' | 'solutions' | 'learn-more'>('landing');
+  const [view, setView] = useState<'landing' | 'signup' | 'dashboard' | 'telehealth' | 'provider' | 'technology' | 'solutions' | 'learn-more' | 'nexera-landing'>('landing');
+
+  useEffect(() => {
+    if (window.location.hash === '#nexera') {
+      setView('nexera-landing');
+    }
+  }, []);
+
   const [user, setUser] = useState<any>(null);
 
   const handleSignupComplete = (onboardingData: any) => {
@@ -70,6 +78,10 @@ function App() {
         </div>
       </div>
     );
+  }
+
+  if (view === 'nexera-landing') {
+    return <NexeraLanding onStartSignup={() => setView('signup')} />;
   }
 
   return (
